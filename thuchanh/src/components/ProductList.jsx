@@ -15,6 +15,7 @@ const ProductList = () => {
     stock: "",
   });
   const [searchTerm, setSearchTerm] = useState("");
+  const [filterCategory, setFilterCategory] = useState("Tất cả");
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -26,6 +27,10 @@ const ProductList = () => {
 
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
+  };
+
+  const handleFilterChange = (e) => {
+    setFilterCategory(e.target.value);
   };
 
   const handleAddProduct = () => {
@@ -53,21 +58,30 @@ const ProductList = () => {
     }
   };
 
-  const filteredProducts = products.filter((product) =>
-    product.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredProducts = products.filter((product) => {
+    const matchName = product.name.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchCategory = filterCategory === "Tất cả" || product.category === filterCategory;
+    return matchName && matchCategory;
+  });
+
+  const allCategories = ["Tất cả", ...new Set(products.map((p) => p.category))];
 
   return (
     <div className="p-4 max-w-4xl mx-auto">
-      {/* Ô tìm kiếm sản phẩm */}
-      <div className="mb-4">
+      {/* Ô tìm kiếm và dropdown lọc danh mục */}
+      <div className="flex gap-4 mb-4">
         <input
           type="text"
           placeholder="Tìm sản phẩm theo tên..."
           value={searchTerm}
           onChange={handleSearchChange}
-          className="border p-2 w-full"
+          className="border p-2 flex-1"
         />
+        <select value={filterCategory} onChange={handleFilterChange} className="border p-2">
+          {allCategories.map((cat, index) => (
+            <option key={index} value={cat}>{cat}</option>
+          ))}
+        </select>
       </div>
 
       {/* Form Thêm sản phẩm */}
