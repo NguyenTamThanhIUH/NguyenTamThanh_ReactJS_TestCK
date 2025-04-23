@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 const initialProducts = [
   { id: 1, name: "Áo thun", price: 150000, category: "Thời trang", stock: 20 },
@@ -23,14 +23,6 @@ const ProductList = () => {
       ...prev,
       [name]: value,
     }));
-  };
-
-  const handleSearchChange = (e) => {
-    setSearchTerm(e.target.value);
-  };
-
-  const handleFilterChange = (e) => {
-    setFilterCategory(e.target.value);
   };
 
   const handleAddProduct = () => {
@@ -58,29 +50,43 @@ const ProductList = () => {
     }
   };
 
+  const handleSearch = (e) => {
+    setSearchTerm(e.target.value);
+  };
+
+  const handleFilterChange = (e) => {
+    setFilterCategory(e.target.value);
+  };
+
   const filteredProducts = products.filter((product) => {
-    const matchName = product.name.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchCategory = filterCategory === "Tất cả" || product.category === filterCategory;
-    return matchName && matchCategory;
+    const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCategory = filterCategory === "Tất cả" || product.category === filterCategory;
+    return matchesSearch && matchesCategory;
   });
 
-  const allCategories = ["Tất cả", ...new Set(products.map((p) => p.category))];
+  const totalProducts = filteredProducts.length;
+  const totalStock = filteredProducts.reduce((sum, product) => sum + product.stock, 0);
 
   return (
     <div className="p-4 max-w-4xl mx-auto">
-      {/* Ô tìm kiếm và dropdown lọc danh mục */}
-      <div className="flex gap-4 mb-4">
+      {/* Tìm kiếm và lọc */}
+      <div className="mb-4 flex gap-4">
         <input
           type="text"
-          placeholder="Tìm sản phẩm theo tên..."
+          placeholder="Tìm kiếm theo tên"
           value={searchTerm}
-          onChange={handleSearchChange}
+          onChange={handleSearch}
           className="border p-2 flex-1"
         />
-        <select value={filterCategory} onChange={handleFilterChange} className="border p-2">
-          {allCategories.map((cat, index) => (
-            <option key={index} value={cat}>{cat}</option>
-          ))}
+        <select
+          value={filterCategory}
+          onChange={handleFilterChange}
+          className="border p-2"
+        >
+          <option value="Tất cả">Tất cả danh mục</option>
+          <option value="Thời trang">Thời trang</option>
+          <option value="Công nghệ">Công nghệ</option>
+          <option value="Gia dụng">Gia dụng</option>
         </select>
       </div>
 
@@ -124,6 +130,11 @@ const ProductList = () => {
         >
           Thêm sản phẩm
         </button>
+      </div>
+
+      {/* Thống kê tổng */}
+      <div className="mb-4 text-right font-semibold">
+        Tổng sản phẩm: {totalProducts} | Tổng tồn kho: {totalStock}
       </div>
 
       {/* Bảng sản phẩm */}
