@@ -17,6 +17,19 @@ const ProductList = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterCategory, setFilterCategory] = useState("Tất cả");
 
+  // Tải dữ liệu sản phẩm từ localStorage khi trang load
+  useEffect(() => {
+    const savedProducts = JSON.parse(localStorage.getItem("products"));
+    if (savedProducts) {
+      setProducts(savedProducts);
+    }
+  }, []);
+
+  // Lưu sản phẩm vào localStorage mỗi khi thay đổi
+  useEffect(() => {
+    localStorage.setItem("products", JSON.stringify(products));
+  }, [products]);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setNewProduct((prev) => ({
