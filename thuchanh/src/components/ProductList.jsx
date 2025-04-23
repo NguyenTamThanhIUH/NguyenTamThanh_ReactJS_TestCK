@@ -1,6 +1,7 @@
 // ProductList.jsx
 import React, { useState, useEffect } from "react";
-import ProductItem from "./ProductItem"; // import ProductItem component
+import { Table, Button, Form, Row, Col, Card } from "react-bootstrap";
+import ProductItem from "./ProductItem"; // Import ProductItem component
 
 const initialProducts = [
   { id: 1, name: "Áo thun", price: 150000, category: "Thời trang", stock: 20 },
@@ -55,7 +56,6 @@ const ProductList = () => {
     };
 
     setProducts([...products, productToAdd]);
-
     setNewProduct({ name: "", price: "", category: "", stock: "" });
   };
 
@@ -66,71 +66,125 @@ const ProductList = () => {
     }
   };
 
+  const handleSearch = (e) => {
+    setSearchTerm(e.target.value);
+  };
+
+  const handleFilterChange = (e) => {
+    setFilterCategory(e.target.value);
+  };
+
+  const filteredProducts = products.filter((product) => {
+    const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCategory = filterCategory === "Tất cả" || product.category === filterCategory;
+    return matchesSearch && matchesCategory;
+  });
+
+  const totalProducts = filteredProducts.length;
+  const totalStock = filteredProducts.reduce((sum, product) => sum + product.stock, 0);
+
   return (
-    <div>
+    <div className="p-4">
+      {/* Tìm kiếm và lọc */}
+      <Row className="mb-4">
+        <Col md={6} className="mx-auto">
+          <Form.Control
+            type="text"
+            placeholder="Tìm kiếm theo tên"
+            value={searchTerm}
+            onChange={handleSearch}
+            className="shadow-sm rounded"
+          />
+        </Col>
+        <Col md={6} className="mx-auto">
+          <Form.Control as="select" value={filterCategory} onChange={handleFilterChange} className="shadow-sm rounded">
+            <option value="Tất cả">Tất cả danh mục</option>
+            <option value="Thời trang">Thời trang</option>
+            <option value="Công nghệ">Công nghệ</option>
+            <option value="Gia dụng">Gia dụng</option>
+          </Form.Control>
+        </Col>
+      </Row>
+
       {/* Form Thêm sản phẩm */}
-      <div className="mb-4 grid grid-cols-5 gap-2">
-        <input
-          type="text"
-          name="name"
-          placeholder="Tên sản phẩm"
-          value={newProduct.name}
-          onChange={handleChange}
-          className="border p-2"
-        />
-        <input
-          type="number"
-          name="price"
-          placeholder="Giá"
-          value={newProduct.price}
-          onChange={handleChange}
-          className="border p-2"
-        />
-        <input
-          type="text"
-          name="category"
-          placeholder="Danh mục"
-          value={newProduct.category}
-          onChange={handleChange}
-          className="border p-2"
-        />
-        <input
-          type="number"
-          name="stock"
-          placeholder="Tồn kho"
-          value={newProduct.stock}
-          onChange={handleChange}
-          className="border p-2"
-        />
-        <button
-          onClick={handleAddProduct}
-          className="bg-blue-500 text-white rounded px-3 py-2 hover:bg-blue-600"
-        >
-          Thêm sản phẩm
-        </button>
+      <Row className="mb-4">
+        <Col md={2} className="mx-auto">
+          <Form.Control
+            type="text"
+            name="name"
+            placeholder="Tên sản phẩm"
+            value={newProduct.name}
+            onChange={handleChange}
+            className="shadow-sm rounded"
+          />
+        </Col>
+        <Col md={2} className="mx-auto">
+          <Form.Control
+            type="number"
+            name="price"
+            placeholder="Giá"
+            value={newProduct.price}
+            onChange={handleChange}
+            className="shadow-sm rounded"
+          />
+        </Col>
+        <Col md={2} className="mx-auto">
+          <Form.Control
+            type="text"
+            name="category"
+            placeholder="Danh mục"
+            value={newProduct.category}
+            onChange={handleChange}
+            className="shadow-sm rounded"
+          />
+        </Col>
+        <Col md={2} className="mx-auto">
+          <Form.Control
+            type="number"
+            name="stock"
+            placeholder="Tồn kho"
+            value={newProduct.stock}
+            onChange={handleChange}
+            className="shadow-sm rounded"
+          />
+        </Col>
+        <Col md={2} className="mx-auto">
+          <Button onClick={handleAddProduct} className="w-100" variant="primary" size="lg">
+            Thêm sản phẩm
+          </Button>
+        </Col>
+      </Row>
+
+      {/* Thống kê tổng */}
+      <div className="mb-4 text-center font-weight-bold text-info">
+        Tổng sản phẩm: {totalProducts} | Tổng tồn kho: {totalStock}
       </div>
 
       {/* Bảng sản phẩm */}
-      <table className="table-auto w-full border">
-        <thead>
-          <tr className="bg-gray-200">
-            <th className="p-2 border">Tên sản phẩm</th>
-            <th className="p-2 border">Giá</th>
-            <th className="p-2 border">Danh mục</th>
-            <th className="p-2 border">Tồn kho</th>
-            <th className="p-2 border">Hành động</th>
-          </tr>
-        </thead>
-        <tbody>
-          {products.map((product) => (
-            <ProductItem
-              key={product.id}
-              product={product}
-              onDelete={handleDeleteProduct} // Truyền hàm xóa vào
-            />
-          ))}
-        </tbody>
-      </table>
+      <Card className="shadow-sm">
+        <Card.Body>
+          <Table striped bordered hover responsive className="shadow-sm">
+            <thead className="table-primary text-center">
+              <tr>
+                <th>Tên sản phẩm</th>
+                <th>Giá</th>
+                <th>Danh mục</th>
+                <th>Tồn kho</th>
+                <th>Hành động</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredProducts.map((product) => (
+                <ProductItem
+                  key={product.id}
+                  product={product}
+                  onDelete={handleDeleteProduct}
+                />
+              ))}
+            </tbody>
+          </Table>
+        </Card.Body>
+      </Card>
     </div>
   );
 };

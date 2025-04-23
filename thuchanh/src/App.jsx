@@ -1,12 +1,14 @@
+// App.jsx
 import React from "react";
-import ProductList from "./components/ProductList";
+import { Container } from "react-bootstrap";
+import ProductList from "./components/ProductList"; // Import ProductList component
 
 function App() {
   return (
-    <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4">Danh sách sản phẩm</h1>
+    <Container className="p-4">
+      <h1 className="text-center mb-4 text-primary" style={{ fontSize: '36px', fontWeight: 'bold' }}>Danh sách sản phẩm</h1>
       <ProductList />
-    </div>
+    </Container>
   );
 }
 

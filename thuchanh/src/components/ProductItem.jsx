@@ -1,20 +1,23 @@
 // ProductItem.jsx
 import React from "react";
+import { Button } from "react-bootstrap";
 
 const ProductItem = ({ product, onDelete }) => {
   return (
-    <tr key={product.id}>
-      <td className="p-2 border">{product.name}</td>
-      <td className="p-2 border">{product.price.toLocaleString()}₫</td>
-      <td className="p-2 border">{product.category}</td>
-      <td className="p-2 border">{product.stock}</td>
-      <td className="p-2 border">
-        <button
+    <tr>
+      <td>{product.name}</td>
+      <td>{product.price.toLocaleString()}₫</td>
+      <td>{product.category}</td>
+      <td>{product.stock}</td>
+      <td className="text-center">
+        <Button
+          variant="danger"
+          size="sm"
           onClick={() => onDelete(product.id)}
-          className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600"
+          className="text-nowrap"
         >
           Xoá
-        </button>
+        </Button>
       </td>
     </tr>
   );
