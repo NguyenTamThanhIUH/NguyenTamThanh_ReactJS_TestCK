@@ -14,6 +14,7 @@ const ProductList = () => {
     category: "",
     stock: "",
   });
+  const [searchTerm, setSearchTerm] = useState("");
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -23,12 +24,10 @@ const ProductList = () => {
     }));
   };
 
-  const handleDeleteProduct = (id) => {
-    const confirmDelete = confirm("Bạn có chắc chắn muốn xoá sản phẩm này?");
-    if (confirmDelete) {
-      setProducts(products.filter((product) => product.id !== id));
-    }
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
   };
+
   const handleAddProduct = () => {
     if (!newProduct.name || !newProduct.price || !newProduct.category || !newProduct.stock) {
       alert("Vui lòng điền đầy đủ thông tin sản phẩm");
@@ -44,12 +43,33 @@ const ProductList = () => {
     };
 
     setProducts([...products, productToAdd]);
-
     setNewProduct({ name: "", price: "", category: "", stock: "" });
   };
 
+  const handleDeleteProduct = (id) => {
+    const confirmDelete = confirm("Bạn có chắc chắn muốn xoá sản phẩm này?");
+    if (confirmDelete) {
+      setProducts(products.filter((product) => product.id !== id));
+    }
+  };
+
+  const filteredProducts = products.filter((product) =>
+    product.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
-    <div>
+    <div className="p-4 max-w-4xl mx-auto">
+      {/* Ô tìm kiếm sản phẩm */}
+      <div className="mb-4">
+        <input
+          type="text"
+          placeholder="Tìm sản phẩm theo tên..."
+          value={searchTerm}
+          onChange={handleSearchChange}
+          className="border p-2 w-full"
+        />
+      </div>
+
       {/* Form Thêm sản phẩm */}
       <div className="mb-4 grid grid-cols-5 gap-2">
         <input
@@ -104,7 +124,7 @@ const ProductList = () => {
           </tr>
         </thead>
         <tbody>
-          {products.map((product) => (
+          {filteredProducts.map((product) => (
             <tr key={product.id}>
               <td className="p-2 border">{product.name}</td>
               <td className="p-2 border">{product.price.toLocaleString()}₫</td>
@@ -112,13 +132,12 @@ const ProductList = () => {
               <td className="p-2 border">{product.stock}</td>
               <td className="p-2 border">
                 <button
-                    onClick={() => handleDeleteProduct(product.id)}
-                    className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600"
+                  onClick={() => handleDeleteProduct(product.id)}
+                  className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600"
                 >
-                    Xoá
+                  Xoá
                 </button>
-                </td>
-
+              </td>
             </tr>
           ))}
         </tbody>
