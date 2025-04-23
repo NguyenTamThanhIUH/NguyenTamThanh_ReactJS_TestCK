@@ -1,4 +1,6 @@
+// ProductList.jsx
 import React, { useState, useEffect } from "react";
+import ProductItem from "./ProductItem"; // import ProductItem component
 
 const initialProducts = [
   { id: 1, name: "Áo thun", price: 150000, category: "Thời trang", stock: 20 },
@@ -53,6 +55,7 @@ const ProductList = () => {
     };
 
     setProducts([...products, productToAdd]);
+
     setNewProduct({ name: "", price: "", category: "", stock: "" });
   };
 
@@ -63,46 +66,8 @@ const ProductList = () => {
     }
   };
 
-  const handleSearch = (e) => {
-    setSearchTerm(e.target.value);
-  };
-
-  const handleFilterChange = (e) => {
-    setFilterCategory(e.target.value);
-  };
-
-  const filteredProducts = products.filter((product) => {
-    const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = filterCategory === "Tất cả" || product.category === filterCategory;
-    return matchesSearch && matchesCategory;
-  });
-
-  const totalProducts = filteredProducts.length;
-  const totalStock = filteredProducts.reduce((sum, product) => sum + product.stock, 0);
-
   return (
-    <div className="p-4 max-w-4xl mx-auto">
-      {/* Tìm kiếm và lọc */}
-      <div className="mb-4 flex gap-4">
-        <input
-          type="text"
-          placeholder="Tìm kiếm theo tên"
-          value={searchTerm}
-          onChange={handleSearch}
-          className="border p-2 flex-1"
-        />
-        <select
-          value={filterCategory}
-          onChange={handleFilterChange}
-          className="border p-2"
-        >
-          <option value="Tất cả">Tất cả danh mục</option>
-          <option value="Thời trang">Thời trang</option>
-          <option value="Công nghệ">Công nghệ</option>
-          <option value="Gia dụng">Gia dụng</option>
-        </select>
-      </div>
-
+    <div>
       {/* Form Thêm sản phẩm */}
       <div className="mb-4 grid grid-cols-5 gap-2">
         <input
@@ -145,11 +110,6 @@ const ProductList = () => {
         </button>
       </div>
 
-      {/* Thống kê tổng */}
-      <div className="mb-4 text-right font-semibold">
-        Tổng sản phẩm: {totalProducts} | Tổng tồn kho: {totalStock}
-      </div>
-
       {/* Bảng sản phẩm */}
       <table className="table-auto w-full border">
         <thead>
@@ -162,21 +122,12 @@ const ProductList = () => {
           </tr>
         </thead>
         <tbody>
-          {filteredProducts.map((product) => (
-            <tr key={product.id}>
-              <td className="p-2 border">{product.name}</td>
-              <td className="p-2 border">{product.price.toLocaleString()}₫</td>
-              <td className="p-2 border">{product.category}</td>
-              <td className="p-2 border">{product.stock}</td>
-              <td className="p-2 border">
-                <button
-                  onClick={() => handleDeleteProduct(product.id)}
-                  className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600"
-                >
-                  Xoá
-                </button>
-              </td>
-            </tr>
+          {products.map((product) => (
+            <ProductItem
+              key={product.id}
+              product={product}
+              onDelete={handleDeleteProduct} // Truyền hàm xóa vào
+            />
           ))}
         </tbody>
       </table>
