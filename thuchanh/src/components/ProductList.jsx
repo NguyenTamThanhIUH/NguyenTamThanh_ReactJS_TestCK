@@ -23,6 +23,12 @@ const ProductList = () => {
     }));
   };
 
+  const handleDeleteProduct = (id) => {
+    const confirmDelete = confirm("Bạn có chắc chắn muốn xoá sản phẩm này?");
+    if (confirmDelete) {
+      setProducts(products.filter((product) => product.id !== id));
+    }
+  };
   const handleAddProduct = () => {
     if (!newProduct.name || !newProduct.price || !newProduct.category || !newProduct.stock) {
       alert("Vui lòng điền đầy đủ thông tin sản phẩm");
@@ -105,10 +111,14 @@ const ProductList = () => {
               <td className="p-2 border">{product.category}</td>
               <td className="p-2 border">{product.stock}</td>
               <td className="p-2 border">
-                <button className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600">
-                  Xoá
+                <button
+                    onClick={() => handleDeleteProduct(product.id)}
+                    className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600"
+                >
+                    Xoá
                 </button>
-              </td>
+                </td>
+
             </tr>
           ))}
         </tbody>
